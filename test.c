@@ -7,7 +7,8 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include "list.h"
+#include <string.h>
+#include "xlist.h"
 
 struct student {
 	int age;
@@ -21,13 +22,10 @@ int main(void)
 	struct student *pnode = NULL;
 	int i;
 
-	struct student *head = (struct student *)malloc(sizeof(struct student));
-	if (head == NULL) {
-		fprintf(stderr, "file: %s line,%d:malloc error!\n", __FILE__, __LINE__);
-		exit(1);
-	}
+	struct student head;
+    memset(&head, 0, sizeof(head));
 
-	INIT_LIST_HEAD(&head->list);
+	INIT_LIST_HEAD(&head.list);
 
 	for (i = 0; i < 10; i++) {
 		list_node = (struct student *)malloc(sizeof(struct student));
@@ -37,26 +35,25 @@ int main(void)
 			exit(1);
 		}
 
-		list_node->age = i + 20;
+		list_node->age = i;
 #ifdef TAIL
-		list_add_tail(&list_node->list, &head->list);
+		list_add_tail(&list_node->list, &head.list);
 #else
-		list_add(&list_node->list, &head->list);
+		list_add(&list_node->list, &head.list);
 #endif
 	}
 
-	if (list_empty(&head->list))
+	if (list_empty(&head.list))
 		printf("list is empty!\n");
 	else {
-		list_for_each(pos, &head->list) {
+		list_for_each(pos, &head.list) {
 			pnode = list_entry(pos, struct student, list);
 			printf("age: %d\n", pnode->age);
 		}
 	}
 
 	printf("======================\n");
-
-	list_for_each_safe(pos, n, &head->list) {
+	list_for_each_safe(pos, n, &head.list) {
 		pnode = list_entry(pos, struct student, list);
 		if (pnode->age % 2 == 0) {
 			printf("age %d has removed from the list!\n", pnode->age);
@@ -65,14 +62,21 @@ int main(void)
 		}
 	}
 
-    printf("------------------------\n");
-	if (list_empty(&head->list))
+	printf("======================\n");
+	if (list_empty(&head.list))
 		printf("list is empty!\n");
 	else {
-		list_for_each(pos, &head->list) {
+		list_for_each(pos, &head.list) {
 			pnode = list_entry(pos, struct student, list);
 			printf("age: %d\n", pnode->age);
 		}
+	}
+
+	list_for_each_safe(pos, n, &head.list) {
+		pnode = list_entry(pos, struct student, list);
+        printf("age %d has removed from the list!\n", pnode->age);
+        list_del(pos);
+        free(pnode);
 	}
 
 	return 0;
