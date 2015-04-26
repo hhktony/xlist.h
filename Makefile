@@ -1,10 +1,9 @@
 CC = gcc
 # CPPFLAGS = -DTAIL
 CFLAGS = -Wall -W -g
-LDFLAGS =
-TARGETS = test
+TARGETS = t_xlist
 
-all : test
+all : $(TARGETS)
 
 clean:
 	$(RM) $(TARGETS) a.out *~ tags
